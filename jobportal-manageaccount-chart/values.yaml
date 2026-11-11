@@ -1,0 +1,78 @@
+replicaCount: 1
+image:
+  repository: $(MANAGEACCOUNT_IMG_REGISTRY)
+  pullPolicy: IfNotPresent
+  tag: $(Build.BuildId)
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+podAnnotations: {}
+podSecurityContext: {}
+securityContext: {}
+
+service:
+  name: manageaccount-svc
+  type: ClusterIP
+  port: $(MANAGE_AC_PORT)
+  targetPort: $(MANAGE_AC_PORT)
+  protocol: TCP
+
+ingress:
+  name: jobportal-ingress-nginx
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 500Mi
+  limits:
+    cpu: 500m
+    memory: 1Gi
+app:
+  name: manageaccount-depl
+  group: api
+  namespace: jobportal-app
+  releasename: manageaccount-release
+  releasenamespace: jobportal-app
+  managedby: Helm
+nodeSelector:
+  agentpool: app
+secrets:
+  manageaccount:
+    name: jobportal-manage-ac-secret
+    MANAGE_AC_PORT: $(MANAGE_AC_PORT)
+    ENVIRONMENT: $(ENVIRONMENT)
+    APP_CONNECTIONSTRING_MONGO: $(APP_CONNECTIONSTRING_MONGO)
+    BLOB_AC_NAME: $(BLOB_AC_NAME)
+    BLOB_AC_KEY: $(BLOB_AC_KEY)
+    BLOB_CONNECTION_STRING: $(BLOB_CONNECTION_STRING)
+    BLOB_LOGGER_CONTAINER: $(BLOB_LOGGER_CONTAINER)
+    BLOB_COMMON_CONTAINER: $(BLOB_COMMON_CONTAINER)
+    BLOB_EMPLOYER_CONTAINER: $(BLOB_EMPLOYER_CONTAINER)
+    BLOB_JOBSEEKER_CONTAINER: $(BLOB_JOBSEEKER_CONTAINER)
+    BLOB_LINK_LIVE_INMIN: $(BLOB_LINK_LIVE_INMIN)
+    LOG_LEVEL: $(LOG_LEVEL)
+    MAX_PWD_HISTORY: $(MAX_PWD_HISTORY)
+    VERIFY_LINK_EXPIRY_DAY: $(VERIFY_LINK_EXPIRY_DAY)
+    MAIL_SVC_HOST: $(MAIL_SVC_HOST)
+    MAIL_SVC_PORT: $(MAIL_SVC_PORT)
+    MAIL_SVC_USERNAME: $(MAIL_SVC_USERNAME)
+    MAIL_SVC_PASSWORD: $(MAIL_SVC_PASSWORD)
+    MAIL_SVC_FROM_NAME: $(MAIL_SVC_FROM_NAME)
+    MAIL_SVC_FROM: $(MAIL_SVC_FROM)
+    EMAIL_TEMP_CONTACT_US: $(EMAIL_TEMP_CONTACT_US)
+    EMAIL_TEMP_EMAIL: $(EMAIL_TEMP_EMAIL)
+    UI_URL: $(UI_URL)
